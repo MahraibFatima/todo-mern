@@ -1,7 +1,0 @@
-const tasks=[
-    {id: 1, task:"task1"},
-    {id:2, task:"task2"},
-    {id:3, task:"task3"},
-   {id:4, task:"task4"},
-];
-export default tasks;
