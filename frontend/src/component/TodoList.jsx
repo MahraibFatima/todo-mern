@@ -1,7 +1,8 @@
 import { useState } from "react";
 import TodoCards from "./TodoCards";
 import { toast, ToastContainer } from "react-toastify";
-
+import Update from "./Update";
+import '../App.css';
 const TodoList = () => {
   const [Array, setArray] = useState([]);
   const [Inputs, setInputs] = useState({
@@ -19,8 +20,8 @@ const TodoList = () => {
     });
   };
   const submit = () => {
-    if (Inputs.title === "" && Inputs.description === "") {
-      toast.error("Title and description are required.");
+    if (Inputs.title === "") {
+      toast.error("Title is required."); 
       return;
     }
     setArray([...Array, Inputs]);
@@ -35,6 +36,7 @@ const TodoList = () => {
     setArray(newArray);
   };
   return (
+    <>
     <div className="p-8 mt-4">
       <ToastContainer />
       <div className="container flex flex-col justify-center items-center">
@@ -86,6 +88,13 @@ const TodoList = () => {
         </div>
       </div>
     </div>
+    <div className="width-full todo-update p-8 bg-gray-100 position-absolute position-top-80 position-bottom-0 position-left-0"> 
+      <div className="container update">
+              <Update/>
+      </div>
+      
+    </div>
+    </>
   );
 };
 
