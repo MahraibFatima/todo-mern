@@ -1,7 +1,46 @@
 import React, { useState } from 'react';
 
 const Auth = () => {
+  const [inputs, setInputs] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
   const [isLogin, setIsLogin] = useState(true);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(inputs);
+    
+    if (isLogin) {
+      console.log('Logging in with:', { email: inputs.email, password: inputs.password });
+    } else {
+       console.log('Signing up with:', inputs);
+    }
+    
+    setInputs({
+      name: "",
+      email: "",
+      password: ""
+    });
+  }
+
+  const toggleMode = () => {
+    setIsLogin((prev) => !prev);
+    setInputs({
+      name: "",
+      email: "",
+      password: ""
+    });
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
@@ -13,7 +52,7 @@ const Auth = () => {
             </h2>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -24,8 +63,10 @@ const Auth = () => {
                     id="name"
                     name="name"
                     type="text"
-                    required
+                    required={!isLogin}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black/90 focus:border-black/90 sm:text-sm"
+                    value={inputs.name}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -43,6 +84,8 @@ const Auth = () => {
                   autoComplete="email"
                   required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black/90 focus:border-black/90 sm:text-sm"
+                  value={inputs.email}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -58,29 +101,14 @@ const Auth = () => {
                   type="password"
                   autoComplete={isLogin ? "current-password" : "new-password"}
                   required
+                  minLength={6}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black/90 focus:border-black/90 sm:text-sm"
+                  value={inputs.password}
+                  onChange={handleChange}
                 />
               </div>
             </div>
-
-            {!isLogin && (
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm Password
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black/90 focus:border-black/90 sm:text-sm"
-                  />
-                </div>
-              </div>
-            )}
-
+            
             {isLogin && (
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -94,7 +122,14 @@ const Auth = () => {
                     Remember me
                   </label>
                 </div>
-
+                
+                {isLogin && (
+                  <div className="text-sm">
+                    <a href="#" className="font-medium text-black/90 hover:text-black">
+                      Forgot your password?
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
@@ -111,7 +146,8 @@ const Auth = () => {
           <p className="mt-6 mb-4 text-center text-sm text-gray-600">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
-              onClick={() => setIsLogin(!isLogin)}
+              type="button"
+              onClick={toggleMode}
               className="font-medium text-black/90 hover:text-black hover:underline transition-colors"
             >
               {isLogin ? 'Sign up' : 'Sign in'}
