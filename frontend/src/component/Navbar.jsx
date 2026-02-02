@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 
 const Navbar = () => {
-  const isLoggedIn = true; // Replace with actual login state logic
+  const isLoggedIn = false; // Replace with actual login state logic
   return (
     <nav className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#B7B89F] to-[#CBCBCB]"></div>

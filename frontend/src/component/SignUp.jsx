@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 
 const SignUp = () => {
@@ -43,10 +44,9 @@ const SignUp = () => {
         "http://localhost:5000/api/auth/register",
         inputs
       );
-      alert(response.data.message);
+      toast.success("Registration successful! Please log in.");
       
       if (response.data.user) {
-        console.log("User data:", response.data.user);
         localStorage.setItem("user", JSON.stringify(response.data.user));
       }
 
@@ -61,7 +61,7 @@ const SignUp = () => {
                           err.message || 
                           "An error occurred. Please try again.";
       setError(errorMessage);
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TodoCards from "./TodoCards";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import Update from "./Update";
 import '../App.css';
 const TodoList = () => {
@@ -38,7 +38,7 @@ const TodoList = () => {
   return (
     <>
     <div className="p-8 mt-4">
-      <ToastContainer />
+      
       <div className="container flex flex-col justify-center items-center">
         <div className="flex flex-col w-full max-w-md">
           <input
