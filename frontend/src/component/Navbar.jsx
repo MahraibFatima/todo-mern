@@ -1,7 +1,16 @@
 import { Link } from "react-router-dom"
+import {useSelector } from "react-redux";
+import { authActions } from "../store";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
-  const isLoggedIn = false; // Replace with actual login state logic
+  const isLoggedIn= useSelector((state) => state.isLoggedIn);
+  const dispatch = useDispatch();
+  const logout = () => {
+    dispatch(authActions.logout());
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("rememberMe");
+  };
   return (
     <nav className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#B7B89F] to-[#CBCBCB]"></div>
@@ -37,7 +46,7 @@ const Navbar = () => {
             >
               todos
             </Link>
-             {!isLoggedIn ? (
+            {!isLoggedIn ? (
               <Link 
                 className="text-black/90 rounded border text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
                 to="/login"
@@ -45,12 +54,11 @@ const Navbar = () => {
                 Login
               </Link>
             ) : (
-              <Link 
+              <button onClick={logout}
                 className="text-black/90 rounded border text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
-                to="/logout"
               >
                 Logout
-              </Link>
+              </button>
             )}
           </div>
         </div>

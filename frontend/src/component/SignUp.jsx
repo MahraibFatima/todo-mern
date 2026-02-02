@@ -39,33 +39,49 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        inputs
-      );
-      toast.success("Registration successful! Please log in.");
-      
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
+try {
+  setError("");
+  
+  const response = await axios.post(
+    "http://localhost:5000/api/auth/register",
+    inputs
+  );
+  
+  toast.success(response.data?.message || "Registration successful! Please log in.")
+  // if (response.data.user) {
+  //   localStorage.setItem("user", JSON.stringify(response.data.user));
+  // }
+  
+  setInputs({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-      setInputs({
-        name: "",
-        email: "",
-        password: "",
-      });
-      navigate("/login"); // Redirect to login page after successful registration
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          "An error occurred. Please try again.";
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setError("");
+  navigate("/login", { replace: true }); 
+
+  
+} catch (err) {
+  console.error("Registration error:", err);
+  
+  let errorMessage = "An error occurred. Please try again.";
+  
+  if (err.response) {
+    errorMessage = err.response.data?.message || 
+                   `Server error: ${err.response.status}`;
+  } else {
+    errorMessage = err.message || errorMessage;
+  }
+  
+  setError(errorMessage);
+  toast.error(errorMessage, {
+    position: "top-right",
+    autoClose: 4000, 
+  });
+} finally {
+  setLoading(false);
+}}
 
   return (
     <div className="bg-gray-50 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">

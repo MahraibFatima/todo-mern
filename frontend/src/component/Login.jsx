@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     email: "",
@@ -34,31 +38,36 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email: inputs.email,
-          password: inputs.password,
-        }
-      );
+        "http://localhost:5000/api/auth/login", inputs);
+      toast.success(response.data?.message || "Login successful!");
       
       if (response.data.user) {
-        console.log("User data:", response.data.user);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        sessionStorage.setItem("id", response.data.user._id);
         if (rememberMe) {
-          localStorage.setItem("rememberMe", "true");
+          sessionStorage.setItem("rememberMe", "true");
         }
+        dispatch(authActions.login());
       }
 
       setInputs({
         email: "",
         password: "",
       });
-      navigate("/"); 
+      navigate("/todo", { replace: true }); 
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          "An error occurred. Please try again.";
+      console.error("Login error:", err);
+      
+      let errorMessage = "An error occurred. Please try again.";
+      
+      if (err.response) {
+        errorMessage = err.response.data?.message || 
+                       `Server error: ${err.response.status}`;
+      } else {
+        errorMessage = err.message || errorMessage;
+      }
+      
       setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
