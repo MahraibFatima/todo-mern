@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom"
+
 const Navbar = () => {
+  const isLoggedIn = true; // Replace with actual login state logic
   return (
     <nav className="relative overflow-hidden">
-      {/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#B7B89F] to-[#CBCBCB]"></div>
     
       <div className="relative px-4 py-3 md:px-8 ">
@@ -15,8 +16,10 @@ const Navbar = () => {
           </button>
           
           <div className="flex items-center gap-3">
-            <Link className="w-9 h-9 md:w-10 md:h-10 bg-white/95 rounded-lg flex items-center 
-                          justify-center text-xl md:text-2xl font-bold shadow-sm" to="/">
+            <Link 
+              className="w-9 h-9 md:w-10 md:h-10 bg-white/95 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold shadow-sm" 
+              to="/"
+            >
               ✓
             </Link>
           </div>
@@ -26,12 +29,30 @@ const Navbar = () => {
               Todos
             </h1>
           </div>
-<div className="flex items-center gap-4">
-  <Link className="text-black/90 rounded border text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
-    to="/auth">
-  login
-</Link>
-</div>
+
+          <div className="flex items-center gap-4">
+            <Link 
+              className="text-black/90 underline bold text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
+              to="/todo"
+            >
+              todos
+            </Link>
+             {!isLoggedIn ? (
+              <Link 
+                className="text-black/90 rounded border text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
+                to="/login"
+              >
+                Login
+              </Link>
+            ) : (
+              <Link 
+                className="text-black/90 rounded border text-sm md:text-base font-medium hidden md:block rounded-lg px-4 py-2 hover:bg-gray-200 cursor-pointer transition-colors"
+                to="/logout"
+              >
+                Logout
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </nav>
