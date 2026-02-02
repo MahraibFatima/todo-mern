@@ -8,8 +8,16 @@ import Footer from "./component/Footer.jsx";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "./store";
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if(sessionStorage.getItem("id"))
+      dispatch(authActions.login());
+  }, []);
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
