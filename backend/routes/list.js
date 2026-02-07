@@ -4,8 +4,8 @@ const List = require("../models/list");
 
 router.post("/add", async (req, res) => {
   try {
-    const { title, description, email } = req.body;
-    const existingUser = await User.findOne({ email });
+    const { title, description, id } = req.body;
+    const existingUser = await User.findById(id);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -32,8 +32,8 @@ router.post("/add", async (req, res) => {
 //update list
 router.put("/update/:id", async (req, res) => {
   try {
-    const {title, description, email} = req.body;
-    const existingUser = await User.findOne({email});
+    const {title, description, id} = req.body;
+    const existingUser = await User.findOne({id});
     if(existingUser){
         const list = await List.findByIdAndUpdate(req.params.id, {
             title,
@@ -50,17 +50,17 @@ router.put("/update/:id", async (req, res) => {
     });
   }});
 
-//delete list
+// delete list
 router.delete("/delete/:id", async (req, res) => {
   try {
-    const {email} = req.body;
-    const existingUser = await User.findOneAndUpdate({email}, {$pull: {lists: req.params.id}});
-    if(existingUser){
-        await List.findByIdAndDelete(req.params.id).then(()=> 
-        res.status(200).json({message: "List deleted successfully"}));
-    }
-  } catch (error) {
+    const todoId = req.params.id;
+    const deletedTodo = await List.findByIdAndDelete(todoId);
     
+    if (!deletedTodo) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+    res.status(200).json({ message: "List deleted successfully" });
+  } catch (error) {
     res.status(400).json({
       message: "Error deleting list",
       error: error.message,
