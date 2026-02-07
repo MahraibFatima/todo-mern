@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Update from "./Update";
 import axios from "axios";
 import '../App.css';
+let id = sessionStorage.getItem("id");
 
 const TodoList = () => {
   const id = sessionStorage.getItem("id");
@@ -17,7 +18,6 @@ const TodoList = () => {
     if (id) {
       try {
         const response = await axios.get(`http://localhost:5000/api/list/get/${id}`);
-        console.log("API Response:", response.data);
         if (response.data && response.data.list) {
            setTodos(response.data.list);
         } else {
@@ -60,7 +60,6 @@ const TodoList = () => {
           id: id
         });
 
-        console.log("Add response:", response.data);
          await fetchTodos();
         
         setInputs({
@@ -89,26 +88,16 @@ const TodoList = () => {
     }
   };
 
-  const del = async (index, todoId) => {
-    if (id && todoId) {
-      try {
-        const todoToDelete = todos[index];
-        
-        await axios.delete(`http://localhost:5000/api/list/delete/${todoId}`, {
-          data: { email: sessionStorage.getItem("email") }
-        });
-        
-        const newArray = todos.filter((_, i) => i !== index);
-        setTodos(newArray);
-        toast.success("Todo deleted!");
-      } catch (error) {
-        console.error("Error deleting todo:", error);
-        toast.error("Failed to delete todo");
-      }
-    } else {
-      const newArray = todos.filter((_, i) => i !== index);
-      setTodos(newArray);
-    }
+  const del = async (id) => {
+    await axios.delete(`http://localhost:5000/api/list/delete/${id}`, {
+      data: { id }
+    }).then(() => {
+      toast.success("Todo deleted successfully!");
+      fetchTodos();
+    }).catch((error) => {
+      console.error("Error deleting todo:", error);
+      toast.error("Failed to delete todo");
+    });
   };
 
   return (
@@ -154,7 +143,7 @@ const TodoList = () => {
                     <TodoCards
                       title={item.title}
                       description={item.description}
-                      id={index}
+                      id={item._id}
                       del_id={del}
                       todoId={item._id} 
                     />
