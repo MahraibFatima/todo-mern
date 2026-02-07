@@ -2,14 +2,18 @@ import { Link } from "react-router-dom"
 import {useSelector } from "react-redux";
 import { authActions } from "../store";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const isLoggedIn= useSelector((state) => state.isLoggedIn);
   const dispatch = useDispatch();
   const logout = () => {
     dispatch(authActions.logout());
+    dispatch(authActions.clearTodos()); 
     sessionStorage.removeItem("id");
     sessionStorage.removeItem("rememberMe");
+    localStorage.removeItem("todos");
+    toast.success("Logged out successfully")
   };
   return (
     <nav className="relative overflow-hidden">
