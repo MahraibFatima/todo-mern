@@ -4,14 +4,19 @@ import { toast } from "react-toastify";
 import Update from "./Update";
 import axios from "axios";
 import '../App.css';
-let id = sessionStorage.getItem("id");
 
 const TodoList = () => {
   const id = sessionStorage.getItem("id");
   const [todos, setTodos] = useState([]); 
   const [inputs, setInputs] = useState({ 
-      title: "",
+    title: "",
     description: "",
+  });
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [updateData, setUpdateData] = useState({
+    title: "",
+    description: "",
+    id: ""
   });
 
   const fetchTodos = async () => {
@@ -19,7 +24,7 @@ const TodoList = () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/list/get/${id}`);
         if (response.data && response.data.list) {
-           setTodos(response.data.list);
+          setTodos(response.data.list);
         } else {
           setTodos([]);
         }
@@ -54,13 +59,13 @@ const TodoList = () => {
 
     if (id) {
       try {
-        const response = await axios.post("http://localhost:5000/api/list/add", {
+        await axios.post("http://localhost:5000/api/list/add", {
           title: inputs.title,
           description: inputs.description,
           id: id
         });
 
-         await fetchTodos();
+        await fetchTodos();
         
         setInputs({
           title: "",
@@ -88,16 +93,58 @@ const TodoList = () => {
     }
   };
 
+  // Fixed update function
+  const handleUpdateClick = (todo) => {
+    // Find the todo by id instead of index for better reliability
+    const todoToUpdate = todos.find(item => item._id === todo.id || item.id === todo.id);
+    if (todoToUpdate) {
+      setUpdateData({
+        title: todoToUpdate.title,
+        description: todoToUpdate.description,
+        id: todoToUpdate._id || todoToUpdate.id
+      });
+      setShowUpdate(true);
+      // Hide the update section if you want to use modal instead
+      document.querySelector('.todo-update').style.display = "block";
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/list/update/${updateData.id}`, {
+        title: updateData.title,
+        description: updateData.description
+      });
+      
+      toast.success("Todo updated successfully!");
+      setShowUpdate(false);
+      document.querySelector('.todo-update').style.display = "none";
+      fetchTodos();
+    } catch (error) {
+      console.error("Error updating todo:", error);
+      toast.error("Failed to update todo");
+    }
+  };
+
+  const handleUpdateChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateData({
+      ...updateData,
+      [name]: value,
+    });
+  };
+
   const del = async (id) => {
-    await axios.delete(`http://localhost:5000/api/list/delete/${id}`, {
-      data: { id }
-    }).then(() => {
+    try {
+      await axios.delete(`http://localhost:5000/api/list/delete/${id}`, {
+        data: { id }
+      });
       toast.success("Todo deleted successfully!");
       fetchTodos();
-    }).catch((error) => {
+    } catch (error) {
       console.error("Error deleting todo:", error);
       toast.error("Failed to delete todo");
-    });
+    }
   };
 
   return (
@@ -145,7 +192,9 @@ const TodoList = () => {
                       description={item.description}
                       id={item._id}
                       del_id={del}
-                      todoId={item._id} 
+                      todoId={item._id}
+                      update_id={index}
+                      tobeUpdate={() => handleUpdateClick(item)} // Pass the entire todo item
                     />
                   </div>
                 ))
@@ -158,9 +207,17 @@ const TodoList = () => {
           </div>
         </div>
       </div>
-      <div className="width-full todo-update p-8 bg-gray-100 position-absolute position-top-80 position-bottom-0 position-left-0">
-        <div className="container update">
-          <Update />
+
+      <div className="todo-update p-8 bg-gray-100" style={{ display: 'none' }}>
+        <div className="container">
+          <Update 
+            display={(val) => {
+              document.querySelector('.todo-update').style.display = val;
+            }} 
+            update={updateData}
+            onChange={handleUpdateChange}
+            onSubmit={handleUpdateSubmit}
+          />
         </div>
       </div>
     </>

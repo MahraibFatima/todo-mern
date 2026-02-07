@@ -2,7 +2,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { GrDocumentUpdate } from "react-icons/gr";
 import '../App.css';
 
-const TodoCards = ({ title, description, id, del_id, todoId }) => {
+const TodoCards = ({ title, description, id, del_id, todoId, tobeUpdate }) => {
   return (
     <div className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 bg-white group">
       <div className="mb-4">
@@ -21,7 +21,7 @@ const TodoCards = ({ title, description, id, del_id, todoId }) => {
         <div 
           className="p-2 hover:text-[#777C6D] rounded-full transition-colors duration-200 cursor-pointer" 
           onClick={() => {
-            document.querySelector('.todo-update').style.display = "block";
+            tobeUpdate(); 
           }}
         >
           <GrDocumentUpdate className="w-5 h-5" title="update" />
@@ -29,7 +29,7 @@ const TodoCards = ({ title, description, id, del_id, todoId }) => {
         <div
           className="p-2 hover:bg-red-50 hover:text-red-600 rounded-full transition-colors duration-200 cursor-pointer"
           onClick={() => {
-            del_id(id, todoId); // Pass both index and todoId
+            del_id(todoId);
           }}
         >
           <MdDeleteOutline className="w-5 h-5" title="delete" />
